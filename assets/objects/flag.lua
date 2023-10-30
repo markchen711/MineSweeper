@@ -37,7 +37,7 @@ end
 function Flag:render(tilesize, renderScale)
     local flagPaddingX = self.state == "flying" and math.floor(6 * renderScale) 
                             or math.floor(9 * renderScale)
-    local flagPaddingY = math.floor(2 * renderScale)
+    local flagPaddingY = math.floor(3 * renderScale)
     love.graphics.draw(gTextures.flags, 
         self.quads[self.currentFrame],
         self.col*tilesize+flagPaddingX, self.row*tilesize+flagPaddingY, 

@@ -7,6 +7,10 @@ function StateMachine:init()
         playing = false,
         gameover = false
     }
+    self._states = {
+        startState = StartState(),
+        playingState = nil
+    }
 end
 
 function StateMachine:changeState(state)
@@ -19,9 +23,9 @@ end
 
 function StateMachine:update(dt)
     if self.states.menu then
-        StartState:update(dt)
+        self._states.startState:update(dt)
     elseif self.states.playing then
-        playingState:update(dt)
+        self._states.playingState:update(dt)
     end
 end
 
@@ -34,6 +38,6 @@ function StateMachine:render()
     if self.states.menu then
         StartState:render()
     elseif self.states.playing then
-        playingState:render()
+        self._states.playingState:render()
     end
 end

@@ -2,10 +2,9 @@
     Hello, My name is Mark Chen
 ]]
 
-require 'assets/requirements'
-require 'global'
-
 function love.load()
+    require 'global'
+    require 'assets/requirements'
     math.randomseed(os.time())
     -- love.window.setTitle("Mine Sweeper - Have fun!")
     love.graphics.setDefaultFilter("nearest", "nearest")
@@ -18,6 +17,8 @@ function love.load()
     love.keyboard.keysPressed = {}
     love.mouse.leftClick = false
     love.mouse.rightClick = false
+
+    stateMachine = StateMachine()
 end
 
 function love.resize(w, h)
@@ -47,6 +48,7 @@ function love.mousepressed(x, y, button, istouch, presses)
 end
 
 function love.update(dt)
+    Timer.update(dt)
     stateMachine:update(dt)
     love.mouse.leftClick = false
     love.mouse.rightClick = false
@@ -56,6 +58,7 @@ end
 function love.draw()
     push:start()
     love.graphics.setBackgroundColor(40/255, 70/255, 92/255)
+    love.graphics.clear(love.graphics.getBackgroundColor())
     stateMachine:render()
     push:finish()
 end

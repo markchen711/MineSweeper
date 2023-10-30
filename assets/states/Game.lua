@@ -2,13 +2,24 @@ require "assets/objects/board"
 require "assets/objects/flag" 
 Game = Class{}
 
+local resultText = Text({x=0, y=VIRTUAL_WIDTH/2.3, font_size="h3",
+    align="center", color={138,187,42}})
+
 function Game:init(grid, bombs)
     self.board = Board(grid, bombs)
-    self.opened = {}
-    self.flagged = {}
-
+    self.flagged = {} -- *hash table
+    self.opened = {}  -- *hash table
     self.tilesize = VIRTUAL_WIDTH/(#self.board.tiles+2)
     self.renderScale = 10/(#self.board.tiles+2)
+
+    -- To improve speed, everytime I add new entry to the table, increment count
+    -- by 1, instead of looping and count entries per frame to check for winning
+    -- condition
+    self.bombs = bombs
+    self.openedCount = 0
+    self.expaneded = {} -- hash table / Deprecated
+    self.state = "playing" -- "won" -- "lost"
+    self.resultText = nil
 end
 
 function Game:update(dt)
@@ -37,8 +48,14 @@ function Game:render()
         end
     end
 
-    for k, value in pairs(self.flagged) do
-        value:render(tilesize, renderScale)
+    for entry, flag in pairs(self.flagged) do
+        if flag ~= nil then
+            flag:render(tilesize, renderScale)
+        end
+    end
+
+    if self.state ~= "playing" then
+        self.resultText:render()
     end
 end
 
@@ -50,15 +67,30 @@ function Game:openCell(x, y)
     cRow < 1 or cRow > #self.board.tiles then
         return
     end
-    for i, flag in pairs(self.flagged) do
-        if flag.col == cCol and flag.row == cRow then
-            table.remove(self.flagged, i)
-            return
-        end
+    if self.flagged[tostring(cRow).."-"..tostring(cCol)] or
+        self.opened[tostring(cRow).."-"..tostring(cCol)] then
+        return
     end
+
     self.opened[tostring(cRow).."-"..tostring(cCol)] = true
+    self.openedCount = self.openedCount + 1
+
     if self.board.tiles[cRow][cCol] == 0 then
         self:expanding(cRow, cCol)
+    end
+
+    if self.board.tiles[cRow][cCol] == 9 then
+        self.resultText = Text({text="YOU LOST", x=0, y=VIRTUAL_WIDTH/2.3, 
+            font_size="h3",align="center", color={221,160,221}, opacity=0,
+            fade_in=true, fade_out=true})
+        self.state = "lost"
+
+    elseif self.openedCount == 
+    #self.board.tiles*#self.board.tiles[1]-self.bombs then
+        self.resultText = Text({text="YOU WON", x=0, y=VIRTUAL_WIDTH/2.3, 
+            font_size="h3",align="center", color={138,187,42}, opacity=0,
+            fade_in=true, fade_out=true})
+        self.state = "won"
     end
 end
 
@@ -67,10 +99,16 @@ function Game:expanding(y, x)
     for i=y-1, y+1 do
         for j=x-1, x+1 do
             if i <= limit and i >= 1 and j <= limit and j >= 1 then
-                if self.board.tiles[i][j] ~= 9 and 
-                    not self.opened[tostring(i).."-"..tostring(j)] then
+                local entry = tostring(i).."-"..tostring(j)
+                if not self.opened[entry] then
 
-                    self.opened[tostring(i).."-"..tostring(j)] = true
+                    self.opened[entry] = true
+                    self.openedCount = self.openedCount + 1
+                    
+                    if self.flagged[entry] then
+                        self.flagged[entry] = nil
+                    end
+
                     if self.board.tiles[i][j] == 0 then
                         self:expanding(i, j)
                     end
@@ -88,11 +126,22 @@ function Game:flag(x, y)
         or self.opened[tostring(cRow).."-"..tostring(cCol)] then
         return
     end
-    for i, flag in pairs(self.flagged) do
-        if flag.col == cCol and flag.row == cRow then
-            table.remove(self.flagged, i)
-            return
-        end
+
+    -- for i, flag in pairs(self.flagged) do
+    --     if flag.col == cCol and flag.row == cRow then
+    --         table.remove(self.flagged, i)
+    --         return
+    --     end
+    -- end
+    -- table.insert(self.flagged, Flag(cRow, cCol))
+
+
+    if self.flagged[tostring(cRow).."-"..tostring(cCol)] then
+        -- removing flag if right click again
+        self.flagged[tostring(cRow).."-"..tostring(cCol)] = nil
+    else
+        -- Store as hashtable instead of continuous int table to easy track when
+        -- performing expanding
+        self.flagged[tostring(cRow).."-"..tostring(cCol)] = Flag(cRow, cCol)
     end
-    table.insert(self.flagged, Flag(cRow, cCol))
 end

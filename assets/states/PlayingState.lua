@@ -8,8 +8,11 @@ end
 
 function PlayingState:update(dt)
     if love.keyboard.wasPressed("p") then
-        stateMachine.changeState("paused")
+        stateMachine:changeState("paused")
+    elseif love.keyboard.wasPressed("n") then
+        stateMachine:changeState("menu")
     end
+
     if love.mouse.leftClick then
         self:mouseClick(true)
     elseif love.mouse.rightClick then
@@ -26,13 +29,17 @@ function PlayingState:mouseClick(clicked)
     -- If not click then it can perform hovering
     local mouse_x, mouse_y = push:toGame(love.mouse.getPosition())
     if clicked then
-        self.game:openCell(mouse_x, mouse_y)
+        if self.game.state == "playing" then
+            self.game:openCell(mouse_x, mouse_y)
+        end
     end
 end
 
 function PlayingState:rightClick(clicked)
     local mouse_x, mouse_y = push:toGame(love.mouse.getPosition())
     if clicked then
-        self.game:flag(mouse_x, mouse_y)
+        if self.game.state == "playing" then
+            self.game:flag(mouse_x, mouse_y)
+        end
     end
 end

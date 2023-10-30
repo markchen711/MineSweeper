@@ -3,6 +3,7 @@ gSprites = 'assets/sprites/'
 gUtils = 'assets/utils/'
 gObjects = 'assets/objects/'
 gStates = 'assets/states/'
+gUIs = 'assets/UIcomponents/'
 Class = require (gLibs .. 'class')
 Event = require (gLibs ..'knife.event')
 push = require (gLibs .. 'push')
@@ -10,6 +11,9 @@ Timer = require (gLibs ..'knife.timer')
 
 require (gUtils.."utils")
 require (gSprites.."sprites")
+
+--UI components
+require (gUIs.."Text")
 
 -- Game components
 require (gObjects.."board")
@@ -21,5 +25,3 @@ require (gStates.."StateMachine")
 require (gStates.."StartState")
 require (gStates.."PlayingState")
 
-playingState = nil
-stateMachine = StateMachine()
