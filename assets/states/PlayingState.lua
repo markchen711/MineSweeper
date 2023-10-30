@@ -4,6 +4,7 @@ function PlayingState:init(grid, bombs)
     local _grid = grid or 8
     local _bombs = bombs or 10
     self.game = Game(_grid, _bombs)
+    self.gametimer = GameTimer()
 end
 
 function PlayingState:update(dt)
@@ -19,10 +20,14 @@ function PlayingState:update(dt)
         self:rightClick(true)
     end
     self.game:update(dt)
+    if self.game.state == "playing" then
+        self.gametimer:update(dt)
+    end
 end
 
 function PlayingState:render()
     self.game:render()
+    self.gametimer:render()
 end
 
 function PlayingState:mouseClick(clicked)

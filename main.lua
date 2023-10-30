@@ -53,6 +53,8 @@ function love.update(dt)
     love.mouse.leftClick = false
     love.mouse.rightClick = false
     love.keyboard.keysPressed = {}
+
+    MenuUI.update(dt)
 end
 
 function love.draw()
@@ -60,6 +62,8 @@ function love.draw()
     love.graphics.setBackgroundColor(40/255, 70/255, 92/255)
     love.graphics.clear(love.graphics.getBackgroundColor())
     stateMachine:render()
+
+    MenuUI.render()
     push:finish()
 end
     

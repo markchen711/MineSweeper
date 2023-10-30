@@ -1,10 +1,10 @@
 Text = Class{}
 
--- local font = love.graphics.newImageFont("assets/fonts/love2d-fonts.png",
--- " abcdefghijklmnopqrstuvwxyz" ..
--- "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
--- "123456789.,!?-+/():;%&`'*#=[]\"")
--- love.graphics.setFont(font)
+lovefont = love.graphics.newImageFont("assets/fonts/love2d-fonts.png",
+" abcdefghijklmnopqrstuvwxyz" ..
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
+"123456789.,!?-+/():;%&`'*#=[]\"")
+
 local font_path = "assets/fonts/ArcadeAlternate.TTF"
 
 local fonts = {
