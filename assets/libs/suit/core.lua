@@ -191,6 +191,8 @@ function suit:enterFrame()
 	else
 		mouse_x, mouse_y = love.mouse.getPosition()
 	end
+	if mouse_x == nil then mouse_x = 1 end
+	if mouse_y == nil then mouse_y = 1 end
 	--
 	self:updateMouse(mouse_x, mouse_y, love.mouse.isDown(1))
 	self.key_down, self.textchar = nil, ""

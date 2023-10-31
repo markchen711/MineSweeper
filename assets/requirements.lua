@@ -16,6 +16,7 @@ require (gSprites.."sprites")
 --UI components
 require (gUIs.."Text")
 MenuUI = require (gUIs.."MenuUI")
+SFX = require (gUIs.."SoundControl")
 
 -- Game components
 require (gObjects.."board")
@@ -28,3 +29,12 @@ require (gStates.."StateMachine")
 require (gStates.."StartState")
 require (gStates.."PlayingState")
 
+SFX.tracks = {
+    ['explosion'] = love.audio.newSource(gSounds.."bombsound.wav","static"),
+    ['win'] = love.audio.newSource(gSounds.."win.wav", "static"),
+    ['start'] = love.audio.newSource(gSounds.."start.wav", "static"),
+    ['click'] = love.audio.newSource(gSounds.."click.wav", "static")
+}
+
+SFX:setVolume("start", 0.5)
+SFX:setVolume("click", 0.5)

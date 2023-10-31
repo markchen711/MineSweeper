@@ -74,6 +74,7 @@ function Game:openCell(x, y)
 
     self.opened[tostring(cRow).."-"..tostring(cCol)] = true
     self.openedCount = self.openedCount + 1
+    SFX:play('click')
 
     if self.board.tiles[cRow][cCol] == 0 then
         self:expanding(cRow, cCol)
@@ -83,6 +84,7 @@ function Game:openCell(x, y)
         self.resultText = Text({text="YOU LOST", x=0, y=VIRTUAL_WIDTH/2.3, 
             font_size="h3",align="center", color={221,160,221}, opacity=0,
             fade_in=true, fade_out=true})
+        SFX:play("explosion")
         self.state = "lost"
 
     elseif self.openedCount == 
@@ -91,6 +93,7 @@ function Game:openCell(x, y)
             font_size="h3",align="center", color={138,187,42}, opacity=0,
             fade_in=true, fade_out=true})
         self.state = "won"
+        SFX:play("win")
     end
 end
 
