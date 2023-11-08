@@ -71,8 +71,8 @@ function HelperAI:reset_knowledgebase()
     local game = stateMachine._states.playingState.game
     for i=1, #game.board.tiles do
         for j=1, #game.board.tiles[i] do
-            if game.board.tiles[i][j] > 0 and game.board.tiles[i][j] < 9 then
-                if game.opened[tostring(i).."-"..tostring(j)]  then
+            if game.opened[tostring(i).."-"..tostring(j)]  then
+                if game.board.tiles[i][j] > 0 and game.board.tiles[i][j] < 9 then
                     table.insert(self.knowledge_base,
                         Sentence(self:neighbors(i, j), game.board.tiles[i][j]))
                 end
