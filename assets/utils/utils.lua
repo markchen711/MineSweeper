@@ -42,3 +42,80 @@ function advancedQuads(atlas, params)
     end
     return spritesheet
 end
+
+function inList(el, array)
+    -- Return index of that element in array, false otherwise
+    local index = 0
+    if type(el) == 'table' then
+        for k, v in pairs(array) do
+            index = index + 1  
+            if table.concat(v, ",") == table.concat(el, ",") then
+                return index
+            end
+        end
+    else for k, v in pairs(array) do 
+            index = index+1 
+            if v == el then return index end
+        end
+    end
+    return false
+end
+
+function properSubset(array, other)
+    if #array >= #other or array==other then
+        return false 
+    else
+        for k, v in pairs(array) do
+            if not inList(v, other) then return false end
+        end
+        return true
+    end
+end
+
+function diff_propersubset(array, other)
+    if properSubset(array, other) then
+        local diff = {}
+        for k, v in pairs(other) do
+            if not inList(v, array) then table.insert(diff, v) end
+        end
+        return diff
+    end
+    return nil
+end
+
+function mysplit (inputstr, sep)
+    if sep == nil then
+            sep = "%s"
+    end
+    local t={}
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+            table.insert(t, str)
+    end
+    return t
+end
+
+function union(tbl, other)
+    -- simply merge 2 tables, without using inList method
+    for _, v in pairs(other) do
+        table.insert(tbl, v)
+    end
+end
+
+function merge_tables(table, other)
+    for _, v in pairs(other) do
+        if not inList(v, table) then table.insert(table, v) end
+    end
+end
+
+-- function remove_duplicates(tbl)
+--     local result = {}
+--     local seen = {}
+ 
+--     for _, value in pairs(tbl) do
+--         if not seen[value] then
+--             table.insert(result, value)
+--             seen[value] = true
+--         end
+--     end
+--     return result
+-- end

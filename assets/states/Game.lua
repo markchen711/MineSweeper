@@ -1,5 +1,6 @@
 require "assets/objects/board" 
 require "assets/objects/flag" 
+require "assets/objects/hint_ai" 
 Game = Class{}
 
 local resultText = Text({x=0, y=VIRTUAL_WIDTH/2.3, font_size="h3",
@@ -20,6 +21,9 @@ function Game:init(grid, bombs)
     self.expaneded = {} -- hash table / Deprecated
     self.state = "playing" -- "won" -- "lost"
     self.resultText = nil
+
+    -- helper ai
+    self.ai = HelperAI(grid, grid)
 end
 
 function Game:update(dt)
@@ -78,6 +82,7 @@ function Game:openCell(x, y)
 
     if self.board.tiles[cRow][cCol] == 0 then
         self:expanding(cRow, cCol)
+        self.ai:reset_knowledgebase()
     end
 
     if self.board.tiles[cRow][cCol] == 9 then
