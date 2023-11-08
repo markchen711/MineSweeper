@@ -6,7 +6,7 @@ end
 function StartState:update(dt)
     if love.keyboard.wasPressed("return") or 
     love.keyboard.wasPressed("enter") then
-        stateMachine._states.playingState = PlayingState(40, 200)
+        stateMachine._states.playingState = PlayingState(28, 100)
         stateMachine:changeState("playing")
     end
 end

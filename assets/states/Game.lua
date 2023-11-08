@@ -24,11 +24,19 @@ function Game:init(grid, bombs)
 
     -- helper ai
     self.ai = HelperAI(grid, grid)
+    self.aiOn = true
 end
 
 function Game:update(dt)
     for k, v in pairs(self.flagged) do
         v:update(dt)
+    end
+    if love.keyboard.wasPressed("i") then
+        for strkey, _ in pairs(self.ai.safes) do
+            local cell = mysplit(strkey, "-")
+            local y, x = tonumber(cell[1]), tonumber(cell[2])
+            self:openCell(x*self.tilesize+1, y*self.tilesize+1)
+        end
     end
 end
 
@@ -61,6 +69,23 @@ function Game:render()
     if self.state ~= "playing" then
         self.resultText:render()
     end
+
+    if self.aiOn then
+        for i=1, #self.board.tiles do
+            for j=1, #self.board.tiles[i] do
+                if self.ai.safes[tostring(i).."-"..tostring(j)] then
+                    love.graphics.setColor(.54, .73, .16, .35)
+                    love.graphics.rectangle("fill",
+                    j*tilesize, i*tilesize, tilesize, tilesize)
+                elseif self.ai.bombs[tostring(i).."-"..tostring(j)] then
+                    love.graphics.setColor(1, 0, 0, .35)
+                    love.graphics.rectangle("fill",
+                    j*tilesize, i*tilesize, tilesize, tilesize)
+                end
+            end
+        end
+        love.graphics.setColor(1,1,1)
+    end
 end
 
 function Game:openCell(x, y)
@@ -82,8 +107,11 @@ function Game:openCell(x, y)
 
     if self.board.tiles[cRow][cCol] == 0 then
         self:expanding(cRow, cCol)
-        self.ai:reset_knowledgebase()
+    --     self.ai:reset_knowledgebase()
+    -- elseif self.board.tiles[cRow][cCol] < 9 then
+    --     self.ai:add_knowledge(cRow, cCol, self.board.tiles[cRow][cCol])
     end
+    self.ai:reset_knowledgebase()
 
     if self.board.tiles[cRow][cCol] == 9 then
         self.resultText = Text({text="YOU LOST", x=0, y=VIRTUAL_WIDTH/2.3, 

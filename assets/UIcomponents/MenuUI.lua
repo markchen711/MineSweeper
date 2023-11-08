@@ -31,7 +31,11 @@ function MenuUI.update(dt)
             stateMachine:changeState("playing")
             SFX:play('start')
         elseif suit.Button("Hard", suit.layout:row()).hit then
-            stateMachine._states.playingState = PlayingState(20, 40)
+            stateMachine._states.playingState = PlayingState(20, 52)
+            stateMachine:changeState("playing")
+            SFX:play('start')
+        elseif suit.Button("Extreme", suit.layout:row()).hit then
+            stateMachine._states.playingState = PlayingState(28, 120)
             stateMachine:changeState("playing")
             SFX:play('start')
         elseif suit.Button("Quit", suit.layout:row()).hit then
@@ -45,6 +49,11 @@ function MenuUI.update(dt)
         suit.layout:reset(255, 0)
         if suit.Button("Quit", suit.layout:row(45, 13)).hit then
             love.event.quit()
+        end
+        suit.layout:reset(0, 0)
+        if suit.Button("AI Hint", suit.layout:row(65, 13)).hit then
+            stateMachine._states.playingState.game.aiOn =
+                    not stateMachine._states.playingState.game.aiOn
         end
     end
 end
