@@ -25,7 +25,7 @@ function Game:init(grid, bombs)
 
     -- helper ai
     self.ai = HelperAI(grid, grid)
-    self.aiOn = true
+    self.aiOn = false
 end
 
 function Game:update(dt)
