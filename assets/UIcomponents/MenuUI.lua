@@ -27,7 +27,7 @@ function MenuUI.update(dt)
             stateMachine:changeState("playing")
             SFX:play('start')
         elseif suit.Button("Medium", suit.layout:row()).hit then
-            stateMachine._states.playingState = PlayingState(12, 20)
+            stateMachine._states.playingState = PlayingState(12, 35)
             stateMachine:changeState("playing")
             SFX:play('start')
         elseif suit.Button("Hard", suit.layout:row()).hit then
@@ -35,7 +35,7 @@ function MenuUI.update(dt)
             stateMachine:changeState("playing")
             SFX:play('start')
         elseif suit.Button("Extreme", suit.layout:row()).hit then
-            stateMachine._states.playingState = PlayingState(28, 120)
+            stateMachine._states.playingState = PlayingState(28, 129)
             stateMachine:changeState("playing")
             SFX:play('start')
         elseif suit.Button("Quit", suit.layout:row()).hit then

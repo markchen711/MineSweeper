@@ -7,16 +7,17 @@ local resultText = Text({x=0, y=VIRTUAL_WIDTH/2.3, font_size="h3",
     align="center", color={138,187,42}})
 
 function Game:init(grid, bombs)
-    self.board = Board(grid, bombs)
+    self.board = nil
     self.flagged = {} -- *hash table
     self.opened = {}  -- *hash table
-    self.tilesize = VIRTUAL_WIDTH/(#self.board.tiles+2)
-    self.renderScale = 10/(#self.board.tiles+2)
-
+    self.grid = grid
+    self.bombs = bombs
+    self.tilesize = VIRTUAL_WIDTH/(self.grid+2)
+    self.renderScale = 10/(self.grid+2)
+    
     -- To improve speed, everytime I add new entry to the table, increment count
     -- by 1, instead of looping and count entries per frame to check for winning
     -- condition
-    self.bombs = bombs
     self.openedCount = 0
     self.expaneded = {} -- hash table / Deprecated
     self.state = "playing" -- "won" -- "lost"
@@ -35,14 +36,26 @@ function Game:update(dt)
         for strkey, _ in pairs(self.ai.safes) do
             local cell = mysplit(strkey, "-")
             local y, x = tonumber(cell[1]), tonumber(cell[2])
-            self:openCell(x*self.tilesize+1, y*self.tilesize+1)
+            -- self:openCell(x*self.tilesize+1, y*self.tilesize+1)
+            self:ai_open_cell(y, x)
         end
+        self.ai:reset_knowledgebase()
     end
 end
 
 function Game:render()
     local tilesize = self.tilesize
     local renderScale = self.renderScale
+
+    if not self.board then
+        for i=1, self.grid do
+            for j=1, self.grid do
+                love.graphics.draw(gTextures.sprites, gQuads.tiles[-1],
+                j*tilesize, i*tilesize, 0, renderScale, renderScale)
+            end
+        end
+        return
+    end
 
     for i=1, #self.board.tiles do
         for j=1, #self.board.tiles[i] do
@@ -92,6 +105,12 @@ function Game:openCell(x, y)
     -- Get corresponding cell based on x, y coordinate
     local cCol = math.floor(x/self.tilesize)
     local cRow = math.floor(y/self.tilesize)
+    if not self.board then
+        repeat 
+            self.board = Board(self.grid, self.bombs)
+        until self.board.tiles[cRow][cCol] ~= 9
+    end
+
     if cCol < 1 or cCol > #self.board.tiles or 
     cRow < 1 or cRow > #self.board.tiles then
         return
@@ -179,5 +198,34 @@ function Game:flag(x, y)
         -- Store as hashtable instead of continuous int table to easy track when
         -- performing expanding
         self.flagged[tostring(cRow).."-"..tostring(cCol)] = Flag(cRow, cCol)
+    end
+end
+
+function Game:ai_open_cell(cRow, cCol)
+    if self.flagged[tostring(cRow).."-"..tostring(cCol)] or
+        self.opened[tostring(cRow).."-"..tostring(cCol)] then
+        return
+    end
+
+    self.opened[tostring(cRow).."-"..tostring(cCol)] = true
+    self.openedCount = self.openedCount + 1
+
+    if self.board.tiles[cRow][cCol] == 0 then
+        self:expanding(cRow, cCol)
+    end
+
+    if self.board.tiles[cRow][cCol] == 9 then
+        self.resultText = Text({text="YOU LOST", x=0, y=VIRTUAL_WIDTH/2.3, 
+            font_size="h3",align="center", color={221,160,221}, opacity=0,
+            fade_in=true, fade_out=true})
+        SFX:play("explosion")
+        self.state = "lost"
+    elseif self.openedCount == 
+    #self.board.tiles*#self.board.tiles[1]-self.bombs then
+        self.resultText = Text({text="YOU WON", x=0, y=VIRTUAL_WIDTH/2.3, 
+            font_size="h3",align="center", color={138,187,42}, opacity=0,
+            fade_in=true, fade_out=true})
+        self.state = "won"
+        SFX:play("win")
     end
 end
